@@ -1,8 +1,9 @@
 import React from "react";
 import { useGame } from "@/game/GameContext";
-import { getHero, xpToNext, RARITY } from "@/game/data";
+import { getHero, xpToNext, RARITY, GEM_UPGRADES } from "@/game/data";
+import { ELEMENTS } from "@/game/combat";
 import { Panel, Bar } from "@/components/common";
-import { Heart, Droplet, Swords, Shield, Zap, Wind, Target, Sword, HardHat, Shirt, Gem } from "lucide-react";
+import { Heart, Droplet, Swords, Shield, Zap, Wind, Target, Sword, HardHat, Shirt, Gem, Sparkles } from "lucide-react";
 
 const STATS = [
   { key: "maxHp", label: "Max HP", icon: Heart, color: "#ef4444" },
@@ -31,7 +32,9 @@ export default function CharacterScreen() {
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
             <div className="absolute bottom-3 left-4">
               <h2 className="font-cinzel text-2xl font-bold" style={{ color: hero.color }}>{profile.username}</h2>
-              <div className="text-sm text-slate-300">Lv {profile.level} · {hero.class}</div>
+              <div className="text-sm text-slate-300 flex items-center gap-2">Lv {profile.level} · {hero.class}
+                <span className="text-[10px] px-1.5 py-px rounded-full border font-semibold" data-testid="char-element" style={{ color: ELEMENTS[hero.element].color, borderColor: `${ELEMENTS[hero.element].color}66`, background: `${ELEMENTS[hero.element].color}1a` }}>{ELEMENTS[hero.element].label}</span>
+              </div>
             </div>
           </div>
           <div className="p-4">
@@ -86,7 +89,7 @@ export default function CharacterScreen() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <Panel className="p-4 vl-fade-up border-sky-500/30">
               <h3 className="font-cinzel text-sky-300 font-bold text-sm mb-1">Skill · {hero.skill.name}</h3>
-              <div className="text-[11px] text-sky-400/80 mb-1">Cost: {hero.skill.mp} MP</div>
+              <div className="text-[11px] text-sky-400/80 mb-1">Cost: {hero.skill.mp} MP{hero.skill.inflict && ` · ${Math.round(hero.skill.inflict.chance * 100)}% to inflict ${hero.skill.inflict.type}`}</div>
               <p className="text-xs text-slate-400">{hero.skill.desc}</p>
             </Panel>
             <Panel className="p-4 vl-fade-up border-amber-500/30">
@@ -94,6 +97,23 @@ export default function CharacterScreen() {
               <p className="text-xs text-slate-400">{hero.passive.desc}</p>
             </Panel>
           </div>
+
+          <Panel className="p-5 vl-fade-up border-fuchsia-500/25" data-testid="char-blessings">
+            <h3 className="font-cinzel text-fuchsia-200 font-bold mb-3 flex items-center gap-2"><Sparkles size={15} /> Eternal Blessings</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              {GEM_UPGRADES.map((u) => {
+                const rank = profile.upgrades[u.id] || 0;
+                return (
+                  <div key={u.id} className="text-center">
+                    <div className="text-[10px] text-slate-400 mb-1 truncate">{u.name.replace(" Blessing", "")}</div>
+                    <div className="flex gap-0.5 justify-center">
+                      {Array.from({ length: u.max }).map((_, k) => <span key={k} className="h-1.5 w-3 rounded-full" style={{ background: k < rank ? u.color : "#1e293b" }} />)}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </Panel>
         </div>
       </div>
     </div>

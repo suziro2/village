@@ -25,6 +25,7 @@ export default function QuestScreen() {
     const parts = [];
     if (r.xp) parts.push(`${r.xp} XP`);
     if (r.coins) parts.push(`${r.coins} coins`);
+    if (r.gems) parts.push(`${r.gems} gems`);
     if (r.consumables) for (const k in r.consumables) parts.push(`${r.consumables[k]}x ${POTION_META[k].name}`);
     if (r.drop) parts.push("Gear Crate");
     return parts.join(" · ");

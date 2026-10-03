@@ -143,6 +143,81 @@ export const HEROES = [
   },
 ];
 
+const HERO_ELEMENT = { aiden: "neutral", luna: "fire", ronan: "neutral", mira: "nature", kael: "shadow", bruno: "fire", sylvie: "nature", darius: "holy", elian: "water", riven: "nature" };
+const SKILL_INFLICT = {
+  aiden: { type: "stun", chance: 0.25, turns: 1 },
+  luna: { type: "burn", chance: 0.6, turns: 3 },
+  ronan: { type: "stun", chance: 0.35, turns: 1 },
+  kael: { type: "poison", chance: 0.6, turns: 3 },
+  sylvie: { type: "poison", chance: 0.5, turns: 3 },
+  darius: { type: "weaken", chance: 0.5, turns: 2 },
+  elian: { type: "stun", chance: 0.3, turns: 1 },
+};
+HEROES.forEach((h) => { h.element = HERO_ELEMENT[h.id]; h.skill.inflict = SKILL_INFLICT[h.id] || null; });
+
+// [enemyElement, bossElement]
+const CHAPTER_ELEMENTS = {
+  1: ["nature", "nature"], 2: ["nature", "nature"], 3: ["water", "water"], 4: ["fire", "fire"], 5: ["nature", "shadow"],
+  6: ["water", "water"], 7: ["nature", "nature"], 8: ["shadow", "fire"], 9: ["shadow", "shadow"], 10: ["holy", "holy"],
+};
+
+const ENEMY_MOVES = {
+  1: [{ name: "Rusty Stab", mult: 1.0 }, { name: "Poison Dart", mult: 0.7, inflict: { type: "poison", chance: 0.45, turns: 2 } }],
+  2: [{ name: "Savage Bite", mult: 1.0 }, { name: "Rending Claws", mult: 0.55, hits: 2 }],
+  3: [{ name: "Frost Punch", mult: 1.0 }, { name: "Ice Grip", mult: 0.7, inflict: { type: "stun", chance: 0.3, turns: 1 } }],
+  4: [{ name: "Dagger Slash", mult: 1.0 }, { name: "Fire Flask", mult: 0.8, inflict: { type: "burn", chance: 0.4, turns: 2 } }],
+  5: [{ name: "Bog Strike", mult: 1.0 }, { name: "Miasma", mult: 0.6, inflict: { type: "poison", chance: 0.5, turns: 3 } }],
+  6: [{ name: "Cutlass Swing", mult: 1.0 }, { name: "Water Burst", mult: 0.8, inflict: { type: "stun", chance: 0.25, turns: 1 } }],
+  7: [{ name: "Spirit Maul", mult: 1.0 }, { name: "Thorn Spray", mult: 0.7, inflict: { type: "poison", chance: 0.4, turns: 2 } }],
+  8: [{ name: "Bone Cleave", mult: 1.0 }, { name: "Cursed Grip", mult: 0.8, inflict: { type: "weaken", chance: 0.4, turns: 2 } }],
+  9: [{ name: "Dark Blade", mult: 1.0 }, { name: "Soul Rend", mult: 0.9, inflict: { type: "weaken", chance: 0.45, turns: 2 } }],
+  10: [{ name: "Astral Strike", mult: 1.0 }, { name: "Radiant Beam", mult: 0.6, hits: 2, inflict: { type: "stun", chance: 0.25, turns: 1 } }],
+};
+
+// Boss attack patterns cycle in order; rage phase triggers at `at` HP ratio and swaps the move set.
+export const BOSS_PATTERNS = {
+  goblin_king: {
+    moves: [{ name: "Club Smash", mult: 1.1 }, { name: "Goblin Horde", mult: 0.55, hits: 2 }, { name: "Rotten Spit", mult: 0.8, inflict: { type: "poison", chance: 0.5, turns: 3 } }],
+    rage: { at: 0.4, name: "Royal Fury", atkMult: 1.3, moves: [{ name: "Crown Crusher", mult: 1.5, inflict: { type: "stun", chance: 0.3, turns: 1 } }, { name: "Goblin Horde", mult: 0.6, hits: 3 }, { name: "Club Smash", mult: 1.2 }] },
+  },
+  forest_guardian: {
+    moves: [{ name: "Thorn Lash", mult: 1.0, inflict: { type: "poison", chance: 0.4, turns: 3 } }, { name: "Root Grasp", mult: 0.7, inflict: { type: "stun", chance: 0.35, turns: 1 } }, { name: "Bark Skin", mult: 0, guard: true }],
+    rage: { at: 0.4, name: "Wrath of the Wild", atkMult: 1.3, moves: [{ name: "Thorn Storm", mult: 0.6, hits: 3, inflict: { type: "poison", chance: 0.4, turns: 3 } }, { name: "Nature's Mend", mult: 0, heal: 0.12 }, { name: "Root Grasp", mult: 0.9, inflict: { type: "stun", chance: 0.4, turns: 1 } }] },
+  },
+  frost_wyrm: {
+    moves: [{ name: "Frost Bite", mult: 1.0 }, { name: "Blizzard Breath", mult: 0.8, inflict: { type: "stun", chance: 0.4, turns: 1 } }, { name: "Ice Shard Volley", mult: 0.5, hits: 3 }],
+    rage: { at: 0.35, name: "Absolute Zero", atkMult: 1.35, moves: [{ name: "Glacial Crush", mult: 1.6, inflict: { type: "stun", chance: 0.45, turns: 1 } }, { name: "Blizzard Breath", mult: 1.0, inflict: { type: "stun", chance: 0.4, turns: 1 } }, { name: "Ice Shard Volley", mult: 0.6, hits: 3 }] },
+  },
+  crimson_warlord: {
+    moves: [{ name: "Blade Fury", mult: 0.7, hits: 2 }, { name: "Scorching Slash", mult: 1.0, inflict: { type: "burn", chance: 0.5, turns: 3 } }, { name: "War Banner", mult: 0, buff: 0.15 }],
+    rage: { at: 0.4, name: "Crimson Inferno", atkMult: 1.3, moves: [{ name: "Inferno Cleave", mult: 1.6, inflict: { type: "burn", chance: 0.6, turns: 3 } }, { name: "Blade Fury", mult: 0.8, hits: 2 }, { name: "Scorching Slash", mult: 1.2, inflict: { type: "burn", chance: 0.5, turns: 3 } }] },
+  },
+  swamp_witch: {
+    moves: [{ name: "Hex Bolt", mult: 0.9, inflict: { type: "weaken", chance: 0.5, turns: 2 } }, { name: "Toxic Brew", mult: 0.6, inflict: { type: "poison", chance: 0.6, turns: 3 } }, { name: "Dark Mending", mult: 0, heal: 0.15 }],
+    rage: { at: 0.4, name: "Coven's Curse", atkMult: 1.25, moves: [{ name: "Plague Burst", mult: 1.2, inflict: { type: "poison", chance: 0.7, turns: 3 } }, { name: "Hex Bolt", mult: 1.1, inflict: { type: "weaken", chance: 0.6, turns: 2 } }, { name: "Dark Mending", mult: 0, heal: 0.1 }] },
+  },
+  kraken_lord: {
+    moves: [{ name: "Tentacle Slam", mult: 1.1 }, { name: "Tidal Wave", mult: 0.9, inflict: { type: "stun", chance: 0.3, turns: 1 } }, { name: "Ink Cloud", mult: 0.5, inflict: { type: "weaken", chance: 0.6, turns: 2 } }],
+    rage: { at: 0.4, name: "Maelstrom", atkMult: 1.3, moves: [{ name: "Crushing Depths", mult: 0.6, hits: 3 }, { name: "Tidal Wave", mult: 1.1, inflict: { type: "stun", chance: 0.4, turns: 1 } }, { name: "Tentacle Slam", mult: 1.4 }] },
+  },
+  ancient_treant: {
+    moves: [{ name: "Branch Swipe", mult: 1.0 }, { name: "Entangle", mult: 0.7, inflict: { type: "stun", chance: 0.4, turns: 1 } }, { name: "Ancient Bark", mult: 0, guard: true }],
+    rage: { at: 0.35, name: "Awakened Colossus", atkMult: 1.35, moves: [{ name: "Rootquake", mult: 1.7, inflict: { type: "stun", chance: 0.35, turns: 1 } }, { name: "Spore Burst", mult: 0.8, inflict: { type: "poison", chance: 0.6, turns: 3 } }, { name: "Nature's Mend", mult: 0, heal: 0.15 }] },
+  },
+  elder_dragon: {
+    moves: [{ name: "Dragon Claw", mult: 1.1 }, { name: "Fire Breath", mult: 1.0, inflict: { type: "burn", chance: 0.6, turns: 3 } }, { name: "Wing Buffet", mult: 0.6, hits: 2, inflict: { type: "stun", chance: 0.25, turns: 1 } }],
+    rage: { at: 0.4, name: "Dragon's Wrath", atkMult: 1.35, moves: [{ name: "Meteor Breath", mult: 1.8, inflict: { type: "burn", chance: 0.7, turns: 3 } }, { name: "Dragon Claw", mult: 1.3 }, { name: "Wing Buffet", mult: 0.7, hits: 2, inflict: { type: "stun", chance: 0.3, turns: 1 } }] },
+  },
+  shadow_lord: {
+    moves: [{ name: "Void Slash", mult: 1.1 }, { name: "Soul Drain", mult: 0.8, heal: 0.1, inflict: { type: "weaken", chance: 0.5, turns: 2 } }, { name: "Shadow Veil", mult: 0, guard: true }],
+    rage: { at: 0.4, name: "Eclipse", atkMult: 1.35, moves: [{ name: "Oblivion", mult: 1.8, inflict: { type: "weaken", chance: 0.6, turns: 2 } }, { name: "Void Slash", mult: 1.3, inflict: { type: "poison", chance: 0.4, turns: 3 } }, { name: "Soul Drain", mult: 1.0, heal: 0.12 }] },
+  },
+  celestial_overlord: {
+    moves: [{ name: "Judgment", mult: 1.2 }, { name: "Starfall", mult: 0.6, hits: 3 }, { name: "Divine Shield", mult: 0, guard: true }],
+    rage: { at: 0.45, name: "Apocalypse", atkMult: 1.4, moves: [{ name: "Annihilation", mult: 2.0, inflict: { type: "stun", chance: 0.4, turns: 1 } }, { name: "Starfall", mult: 0.7, hits: 3, inflict: { type: "burn", chance: 0.5, turns: 3 } }, { name: "Celestial Renewal", mult: 0, heal: 0.12 }, { name: "Judgment", mult: 1.4, inflict: { type: "weaken", chance: 0.5, turns: 2 } }] },
+  },
+};
+
 export const CHAPTERS = [
   {
     id: 1, name: "The Beginning", rec: "1-5", theme: "Verdant village outskirts", enemyName: "Goblin Scout", enemyImg: "goblin",
@@ -204,7 +279,35 @@ export const SHOP_ITEMS = [
   { id: "atk_potion", name: "Attack Elixir", price: 200, desc: "+30% Attack this battle", accent: "#ef4444" },
   { id: "def_potion", name: "Defense Elixir", price: 200, desc: "+40% Defense this battle", accent: "#eab308" },
   { id: "crit_potion", name: "Critical Elixir", price: 250, desc: "+20% Crit this battle", accent: "#f59e0b" },
+  { id: "antidote", name: "Antidote", price: 45, desc: "Cures Poison, Burn, Weaken and Stun", accent: "#a3e635" },
 ];
+
+export const GEM_GEAR = [
+  { id: "gem_starforged_blade", name: "Starforged Blade", slot: "weapon", rarity: "legendary", stats: { atk: 30, crit: 10, spd: 3 }, gems: 40 },
+  { id: "gem_voidweave_robe", name: "Voidweave Robe", slot: "armor", rarity: "legendary", stats: { def: 20, hp: 80, mp: 60, mag: 10 }, gems: 40 },
+  { id: "gem_halo_circlet", name: "Halo Circlet", slot: "helmet", rarity: "legendary", stats: { def: 12, hp: 40, mag: 15, crit: 5 }, gems: 30 },
+  { id: "gem_eternal_sigil", name: "Eternal Sigil", slot: "accessory", rarity: "legendary", stats: { mp: 60, mag: 18, atk: 10, spd: 6 }, gems: 35 },
+  { id: "gem_dawnbreaker", name: "Dawnbreaker", slot: "weapon", rarity: "epic", stats: { atk: 18, mag: 8, crit: 4 }, gems: 18 },
+  { id: "gem_wardens_mail", name: "Warden's Mail", slot: "armor", rarity: "epic", stats: { def: 16, hp: 60 }, gems: 18 },
+];
+
+export const GEM_UPGRADES = [
+  { id: "hp", name: "Vitality Blessing", desc: "+6% Max HP per rank", per: 0.06, max: 5, base: 8, color: "#ef4444" },
+  { id: "atk", name: "Might Blessing", desc: "+5% Attack per rank", per: 0.05, max: 5, base: 8, color: "#f59e0b" },
+  { id: "def", name: "Bulwark Blessing", desc: "+5% Defense per rank", per: 0.05, max: 5, base: 8, color: "#eab308" },
+  { id: "mag", name: "Arcane Blessing", desc: "+5% Magic per rank", per: 0.05, max: 5, base: 8, color: "#a855f7" },
+  { id: "crit", name: "Fortune Blessing", desc: "+2 Crit per rank", flat: 2, max: 5, base: 10, color: "#fb7185" },
+];
+
+export const GEM_CONSUMABLES = [
+  { id: "phoenix_feather", name: "Phoenix Feather", gems: 12, desc: "Automatically revives you once per battle at 50% HP", accent: "#fb923c" },
+];
+
+export function blessingCost(up, rank) {
+  return up.base + rank * 4;
+}
+
+export const EMPTY_UPGRADES = { hp: 0, atk: 0, def: 0, mag: 0, crit: 0 };
 
 export const POTION_META = {
   hp_potion: { name: "HP Potion", accent: "#10b981" },
@@ -214,6 +317,8 @@ export const POTION_META = {
   atk_potion: { name: "Attack Elixir", accent: "#ef4444" },
   def_potion: { name: "Defense Elixir", accent: "#eab308" },
   crit_potion: { name: "Critical Elixir", accent: "#f59e0b" },
+  antidote: { name: "Antidote", accent: "#a3e635" },
+  phoenix_feather: { name: "Phoenix Feather", accent: "#fb923c" },
 };
 
 export const RARITY = {
@@ -248,13 +353,13 @@ export const EQUIP_TEMPLATES = [
 
 export const QUESTS = [
   { id: "q_kill10", title: "Monster Hunter", desc: "Defeat 10 enemies", statKey: "kills", target: 10, repeatable: true, reward: { xp: 120, coins: 200, consumables: { hp_potion: 2 } } },
-  { id: "q_levels3", title: "Pathfinder", desc: "Complete 3 levels", statKey: "levels", target: 3, repeatable: true, reward: { xp: 150, coins: 250 } },
+  { id: "q_levels3", title: "Pathfinder", desc: "Complete 3 levels", statKey: "levels", target: 3, repeatable: true, reward: { xp: 150, coins: 250, gems: 2 } },
   { id: "q_coins500", title: "Treasure Seeker", desc: "Earn 500 coins", statKey: "coinsEarned", target: 500, repeatable: true, reward: { xp: 100, consumables: { greater_hp: 1 } } },
   { id: "q_potions3", title: "Alchemist's Aid", desc: "Use 3 potions", statKey: "potionsUsed", target: 3, repeatable: true, reward: { coins: 150, xp: 80 } },
-  { id: "q_boss1", title: "Boss Slayer", desc: "Defeat a boss", statKey: "bosses", target: 1, repeatable: true, reward: { xp: 300, coins: 500, drop: true } },
-  { id: "q_reach5", title: "Rising Hero", desc: "Reach Level 5", statKey: "level", target: 5, repeatable: false, reward: { coins: 300, consumables: { greater_hp: 2 } } },
-  { id: "q_reach15", title: "Seasoned Adventurer", desc: "Reach Level 15", statKey: "level", target: 15, repeatable: false, reward: { coins: 800, drop: true } },
-  { id: "q_reach30", title: "Living Legend", desc: "Reach Level 30", statKey: "level", target: 30, repeatable: false, reward: { coins: 2000, drop: true } },
+  { id: "q_boss1", title: "Boss Slayer", desc: "Defeat a boss", statKey: "bosses", target: 1, repeatable: true, reward: { xp: 300, coins: 500, gems: 5, drop: true } },
+  { id: "q_reach5", title: "Rising Hero", desc: "Reach Level 5", statKey: "level", target: 5, repeatable: false, reward: { coins: 300, gems: 10, consumables: { greater_hp: 2 } } },
+  { id: "q_reach15", title: "Seasoned Adventurer", desc: "Reach Level 15", statKey: "level", target: 15, repeatable: false, reward: { coins: 800, gems: 20, drop: true } },
+  { id: "q_reach30", title: "Living Legend", desc: "Reach Level 30", statKey: "level", target: 30, repeatable: false, reward: { coins: 2000, gems: 40, drop: true } },
 ];
 
 export function xpToNext(level) {
@@ -273,6 +378,13 @@ export function getComputedStats(profile) {
     const it = profile.equipment[slot];
     if (it) for (const k in it.stats) s[map[k]] += it.stats[k];
   }
+  const up = profile.upgrades || EMPTY_UPGRADES;
+  for (const u of GEM_UPGRADES) {
+    const rank = up[u.id] || 0;
+    if (!rank) continue;
+    if (u.flat) s.crit += u.flat * rank;
+    else s[map[u.id]] = Math.round(s[map[u.id]] * (1 + u.per * rank));
+  }
   return s;
 }
 
@@ -288,10 +400,16 @@ export function buildEnemy(chapter, level) {
   let xp = Math.round((28 + gl * 16) * (isBoss ? 3 : 1));
   let coins = Math.round((18 + gl * 11) * (isBoss ? 4 : 1));
   if (isFinal) { hp = Math.round(hp * 1.5); atk = Math.round(atk * 1.3); def = Math.round(def * 1.2); xp = Math.round(xp * 1.4); coins = Math.round(coins * 1.5); }
+  const [enemyEl, bossEl] = CHAPTER_ELEMENTS[chapter];
+  const pattern = isBoss ? BOSS_PATTERNS[cfg.bossImg] : null;
   return {
     name: isBoss ? cfg.bossName : cfg.enemyName,
     img: isBoss ? BOSS_IMG[cfg.bossImg] : ENEMY_IMG[cfg.enemyImg],
     maxHp: hp, hp, atk, def, spd, xp, coins, isBoss, isFinal,
+    gems: isBoss ? 6 + chapter * 2 : 0,
+    element: isBoss ? bossEl : enemyEl,
+    moves: isBoss ? pattern.moves : ENEMY_MOVES[chapter],
+    rage: isBoss ? pattern.rage : null,
     chapter, level,
   };
 }
@@ -338,7 +456,8 @@ export function createProfile(username, heroId) {
     mp: h.base.mp,
     coins: 500,
     gems: 0,
-    consumables: { hp_potion: 3, mp_potion: 2, greater_hp: 0, greater_mp: 0, atk_potion: 0, def_potion: 0, crit_potion: 0 },
+    upgrades: { ...EMPTY_UPGRADES },
+    consumables: { hp_potion: 3, mp_potion: 2, greater_hp: 0, greater_mp: 0, atk_potion: 0, def_potion: 0, crit_potion: 0, antidote: 1, phoenix_feather: 0 },
     equipment: { weapon: null, armor: null, helmet: null, accessory: null },
     inventory: [],
     progress: { unlockedChapter: 1, completed: {} },

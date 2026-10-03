@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { loadProfile, saveProfile, clearProfile } from "./storage";
-import { createProfile, getComputedStats, getHero, xpToNext, makeDrop, QUESTS } from "./data";
+import { createProfile, getComputedStats, getHero, xpToNext, makeDrop, QUESTS, GEM_UPGRADES, blessingCost } from "./data";
 
 const GameContext = createContext(null);
 export const useGame = () => useContext(GameContext);
@@ -85,6 +85,50 @@ export function GameProvider({ children }) {
     return ok;
   }, []);
 
+  // ---- gem shop ----
+  const buyGemGear = useCallback((item) => {
+    let ok = false;
+    setProfile((prev) => {
+      if (prev.gems < item.gems) return prev;
+      ok = true;
+      const drop = {
+        uid: "it_" + Date.now().toString(36) + Math.floor(Math.random() * 1e6).toString(36),
+        templateId: item.id, name: item.name, slot: item.slot, rarity: item.rarity, stats: { ...item.stats }, premium: true,
+      };
+      return { ...prev, gems: prev.gems - item.gems, inventory: [...prev.inventory, drop] };
+    });
+    return ok;
+  }, []);
+
+  const buyGemConsumable = useCallback((item) => {
+    let ok = false;
+    setProfile((prev) => {
+      if (prev.gems < item.gems) return prev;
+      ok = true;
+      const next = { ...prev, gems: prev.gems - item.gems, consumables: { ...prev.consumables } };
+      next.consumables[item.id] = (next.consumables[item.id] || 0) + 1;
+      return next;
+    });
+    return ok;
+  }, []);
+
+  const buyBlessing = useCallback((upId) => {
+    let ok = false;
+    setProfile((prev) => {
+      const up = GEM_UPGRADES.find((u) => u.id === upId);
+      const rank = prev.upgrades[upId] || 0;
+      if (rank >= up.max) return prev;
+      const cost = blessingCost(up, rank);
+      if (prev.gems < cost) return prev;
+      ok = true;
+      const next = { ...prev, gems: prev.gems - cost, upgrades: { ...prev.upgrades, [upId]: rank + 1 } };
+      const c = getComputedStats(next);
+      next.hp = Math.min(c.maxHp, Math.max(prev.hp, Math.round(prev.hp * (c.maxHp / getComputedStats(prev).maxHp))));
+      return next;
+    });
+    return ok;
+  }, []);
+
   const equipItem = useCallback((uid) => {
     setProfile((prev) => {
       const item = prev.inventory.find((i) => i.uid === uid);
@@ -131,6 +175,7 @@ export function GameProvider({ children }) {
       const next = { ...prev, consumables: { ...prev.consumables }, inventory: [...prev.inventory], questState: { ...prev.questState } };
       const r = q.reward;
       if (r.coins) next.coins += r.coins;
+      if (r.gems) next.gems = (next.gems || 0) + r.gems;
       if (r.xp) applyXp(next, r.xp);
       if (r.consumables) for (const k in r.consumables) next.consumables[k] = (next.consumables[k] || 0) + r.consumables[k];
       if (r.drop) next.inventory.push(makeDrop(Math.min(10, prev.progress.unlockedChapter + 1), true));
@@ -155,6 +200,8 @@ export function GameProvider({ children }) {
       const key = `${chapter}-${level}`;
       const prevStars = next.progress.completed[key] || 0;
       next.progress.completed[key] = Math.max(prevStars, stars);
+      const gems = (enemy.gems || 0) + (stars === 3 && prevStars < 3 ? 1 : 0);
+      next.gems = (prev.gems || 0) + gems;
       next.stats.kills += 1;
       next.stats.levels += 1;
       next.stats.coinsEarned += enemy.coins;
@@ -167,7 +214,7 @@ export function GameProvider({ children }) {
       next.mp = Math.max(0, Math.round(playerMp));
       const leveled = applyXp(next, enemy.xp);
       if (dropItem) next.inventory.push(dropItem);
-      setLastRewards({ xp: enemy.xp, coins: enemy.coins, item: dropItem || null, leveled, newLevel: next.level, stars });
+      setLastRewards({ xp: enemy.xp, coins: enemy.coins, gems, item: dropItem || null, leveled, newLevel: next.level, stars });
       return next;
     });
     if (enemy.isFinal) setScreen("gameComplete");
@@ -196,7 +243,7 @@ export function GameProvider({ children }) {
   const value = {
     profile, computed, screen, draftName, setDraftName, currentChapter, currentBattle, lastRewards,
     startNewGame, resetSave, go, openChapter, startLevel,
-    updateSettings, buyItem, equipItem, unequipItem, sellItem, claimQuest, statValue,
+    updateSettings, buyItem, buyGemGear, buyGemConsumable, buyBlessing, equipItem, unequipItem, sellItem, claimQuest, statValue,
     applyVictory, applyDefeat, applyEscape,
   };
 

@@ -44,7 +44,7 @@ export default function NavBar() {
 
         <div className="flex items-center gap-3 ml-auto">
           <span className="flex items-center gap-1 text-amber-300 text-sm font-semibold" data-testid="nav-coins"><Coins size={16} /> {profile.coins}</span>
-          <span className="hidden sm:flex items-center gap-1 text-fuchsia-300 text-sm font-semibold"><Gem size={15} /> {profile.gems}</span>
+          <span className="flex items-center gap-1 text-fuchsia-300 text-sm font-semibold" data-testid="nav-gems"><Gem size={15} /> {profile.gems}</span>
         </div>
       </div>
 

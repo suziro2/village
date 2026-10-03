@@ -1,17 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useGame } from "@/game/GameContext";
 import { getHero, CHAPTERS, BG_IMG, RARITY } from "@/game/data";
+import { playSfx } from "@/game/audio";
 import { Panel, GoldButton, Stars } from "@/components/common";
-import { Coins, Sparkles, TrendingUp, Gift, Skull, Crown, Trophy, Home, RefreshCw, Map } from "lucide-react";
+import { Coins, Sparkles, TrendingUp, Gift, Skull, Crown, Trophy, Home, RefreshCw, Map, Gem } from "lucide-react";
 
 function RewardRow({ rewards }) {
   return (
     <div className="flex flex-wrap items-center justify-center gap-4 my-5">
       <div className="flex items-center gap-1.5 text-fuchsia-300"><Sparkles size={18} /> <span className="font-bold">+{rewards.xp}</span> XP</div>
       <div className="flex items-center gap-1.5 text-amber-300"><Coins size={18} /> <span className="font-bold">+{rewards.coins}</span></div>
+      {rewards.gems > 0 && <div className="flex items-center gap-1.5 text-fuchsia-200" data-testid="reward-gems"><Gem size={16} /> <span className="font-bold">+{rewards.gems}</span></div>}
       {rewards.leveled && <div className="flex items-center gap-1.5 text-emerald-300"><TrendingUp size={18} /> Level {rewards.newLevel}!</div>}
     </div>
   );
+}
+
+function useResultSfx(name, leveled) {
+  useEffect(() => {
+    playSfx(name);
+    if (leveled) setTimeout(() => playSfx("levelup"), 900);
+  }, [name, leveled]);
 }
 
 function DropRow({ item }) {
@@ -42,6 +51,7 @@ export function VictoryScreen() {
   const { chapter, level } = currentBattle;
   const hasNext = level < 5;
   const r = lastRewards || { xp: 0, coins: 0 };
+  useResultSfx("victory", r.leveled);
   return (
     <Shell bg={BG_IMG[chapter]}>
       <Panel className="relative w-full max-w-md p-8 text-center vl-victory-pop">
@@ -65,6 +75,7 @@ export function VictoryScreen() {
 export function DefeatScreen() {
   const { currentBattle, startLevel, go } = useGame();
   const { chapter, level } = currentBattle;
+  useResultSfx("defeat", false);
   return (
     <Shell bg={BG_IMG[chapter]}>
       <Panel className="relative w-full max-w-md p-8 text-center vl-fade-up border-rose-500/40">
@@ -88,6 +99,7 @@ export function ChapterCompleteScreen() {
   const nextCh = Math.min(10, chapter + 1);
   const nextName = CHAPTERS[nextCh - 1].name;
   const r = lastRewards || { xp: 0, coins: 0 };
+  useResultSfx("victory", r.leveled);
   return (
     <Shell bg={BG_IMG[chapter]}>
       <Panel className="relative w-full max-w-md p-8 text-center vl-victory-pop">
@@ -112,6 +124,7 @@ export function ChapterCompleteScreen() {
 export function GameCompleteScreen() {
   const { profile, go } = useGame();
   const hero = getHero(profile.heroId);
+  useResultSfx("victory", true);
   return (
     <Shell bg={BG_IMG[10]}>
       <Panel className="relative w-full max-w-lg p-8 text-center vl-victory-pop">

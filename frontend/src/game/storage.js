@@ -1,10 +1,16 @@
+import { EMPTY_UPGRADES } from "./data";
+
 const KEY = "village_legends_save_v1";
 
 export function loadProfile() {
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) return null;
-    return JSON.parse(raw);
+    const p = JSON.parse(raw);
+    p.gems = p.gems || 0;
+    p.upgrades = { ...EMPTY_UPGRADES, ...(p.upgrades || {}) };
+    p.consumables = { antidote: 0, phoenix_feather: 0, ...p.consumables };
+    return p;
   } catch (e) {
     return null;
   }
