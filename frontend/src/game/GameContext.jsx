@@ -130,7 +130,7 @@ export function GameProvider({ children }) {
       if (val - qs.baseline < q.target) return prev;
       const next = { ...prev, consumables: { ...prev.consumables }, inventory: [...prev.inventory], questState: { ...prev.questState } };
       const r = q.reward;
-      if (r.coins) { next.coins += r.coins; next.stats = { ...next.stats, coinsEarned: next.stats.coinsEarned }; }
+      if (r.coins) next.coins += r.coins;
       if (r.xp) applyXp(next, r.xp);
       if (r.consumables) for (const k in r.consumables) next.consumables[k] = (next.consumables[k] || 0) + r.consumables[k];
       if (r.drop) next.inventory.push(makeDrop(Math.min(10, prev.progress.unlockedChapter + 1), true));
