@@ -1,0 +1,254 @@
+{
+  "project_info": {
+    "title": "Village Legends — Modern Anime Fantasy RPG",
+    "theme": "Dark Fantasy Glassmorphic Anime RPG",
+    "target_platform": "Desktop-first responsive Web Application (React.js)",
+    "aesthetic_principles": [
+      "Modern high-resolution anime fantasy visual language — NEVER pixel art",
+      "Cinematic dark navy backgrounds (#0B0F19, #111827) with translucent glassmorphic panels",
+      "Filigree gold borders (#F59E0B, #D97706, #78350F) and glowing metallic accents",
+      "Magical energy accents: Emerald Green for stamina/healing, Mana Blue for skills/magic, Crimson Red for bosses/crit damage, Radiant Gold for rare loot & progression",
+      "Ornate fantasy headlines (Cinzel / Cormorant Garamond / Trajan typography) paired with clean geometric body text (Outfit / Plus Jakarta Sans)",
+      "High visual density with tactile combat HUDs, floating damage indicators, particle trails, and interactive animations"
+    ]
+  },
+  "typography": {
+    "heading_font_family": "'Cinzel', 'Cormorant Garamond', 'Trajan Pro', serif",
+    "body_font_family": "'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif",
+    "mono_font_family": "'Fira Code', 'JetBrains Mono', monospace",
+    "font_sources_cdn": "https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap",
+    "hierarchy": {
+      "h1_title": "text-4xl sm:text-5xl lg:text-6xl tracking-wider font-extrabold uppercase font-serif drop-shadow-[0_4px_12px_rgba(245,158,11,0.4)]",
+      "h2_chapter": "text-2xl sm:text-3xl lg:text-4xl tracking-wide font-bold font-serif text-amber-200 border-b border-amber-500/30 pb-2",
+      "h3_hero_name": "text-xl sm:text-2xl font-bold font-serif text-amber-300 drop-shadow-md",
+      "h4_modal": "text-lg sm:text-xl font-semibold font-serif text-slate-100",
+      "body_text": "text-sm sm:text-base text-slate-300 leading-relaxed font-sans",
+      "stat_value": "text-base sm:text-lg font-bold font-mono text-emerald-400 tracking-tight",
+      "label_overline": "text-xs uppercase font-semibold tracking-[0.2em] text-amber-400/80"
+    }
+  },
+  "colors": {
+    "background_dark_navy": "#090D16",
+    "background_deep_slate": "#0F172A",
+    "panel_glass_bg": "rgba(15, 23, 42, 0.75)",
+    "panel_glass_border": "rgba(245, 158, 11, 0.3)",
+    "panel_glass_glow": "0 8px 32px 0 rgba(0, 0, 0, 0.5)",
+    "gold_primary": "#F59E0B",
+    "gold_light": "#FCD34D",
+    "gold_dark": "#92400E",
+    "gold_border_gradient": "linear-gradient(135deg, #F59E0B 0%, #78350F 50%, #FCD34D 100%)",
+    "magic_blue": "#38BDF8",
+    "mana_cyan": "#06B6D4",
+    "healing_green": "#10B981",
+    "stamina_emerald": "#34D399",
+    "boss_crimson": "#EF4444",
+    "boss_dark_red": "#991B1B",
+    "xp_purple": "#A855F7",
+    "coins_yellow": "#EAB308",
+    "text_light": "#F8FAFC",
+    "text_muted": "#94A3B8"
+  },
+  "layout_and_spacing": {
+    "app_wrapper": "min-h-screen bg-[#090D16] text-slate-100 flex flex-col font-sans selection:bg-amber-500/30 selection:text-amber-200 relative overflow-hidden",
+    "header_nav": "sticky top-0 z-50 backdrop-blur-md bg-[#090D16]/85 border-b border-amber-500/30 px-4 py-3 flex items-center justify-between shadow-lg shadow-black/40",
+    "main_content_container": "flex-1 max-w-7xl mx-auto w-full px-3 sm:px-6 py-4 flex flex-col gap-6",
+    "bento_grid": "grid grid-cols-1 md:grid-cols-12 gap-4 lg:gap-6",
+    "card_padding": "p-4 sm:p-6",
+    "panel_style": "backdrop-blur-xl bg-slate-900/80 border border-amber-500/30 rounded-xl shadow-2xl relative overflow-hidden group"
+  },
+  "component_guidelines": {
+    "navigation_bar": {
+      "components": [
+        "Brand Logo with animated glowing crest",
+        "Profile / Username display with current level badge",
+        "Quick stats HUD (Coins count, XP progress bar, Health/Mana quick view)",
+        "Tab Navigation: World Map, Heroes, Inventory, Quest Board, Shop, Settings",
+        "Volume / Audio Toggle & Auto-save status indicator"
+      ]
+    },
+    "login_creation_screen": {
+      "components": [
+        "Local Username input (saved to localStorage)",
+        "Hero Avatar pre-selection avatar wheel",
+        "Difficulty selector (Novice, Champion, Mythic)",
+        "Start Adventure CTA with glowing golden border"
+      ]
+    },
+    "hero_selection_grid": {
+      "grid_layout": "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4",
+      "hero_card_features": [
+        "10 distinct playable heroes: Knight, Archmage, Shadow Blade, Paladin, Elementalist, Berserker, Celestial Cleric, Dragon Ranger, Necromancer, Wind Monk",
+        "HD anime artwork illustration frame",
+        "Class icon, Base Stats radar chart / bars (ATK, DEF, MAG, SPD, CRIT)",
+        "Unique skill previews with animated glow on select",
+        "Level 1-50 progression tier badge"
+      ]
+    },
+    "world_map": {
+      "layout": "Interactive region map spanning 10 Chapters",
+      "features": [
+        "10 thematic chapter nodes: Whispering Woods, Sunken Shrine, Ember Peaks, Frostbite Ridge, Shadowed Hollow, Skyreach Citadel, Serpent Swamps, Celestial Ruins, Void Abyss, Dragon's Throne",
+        "Hover tooltip with chapter lore, level recommendation, fight count (40 fights + 10 Bosses), and completion status",
+        "Animated path lines glowing with golden light for unlocked routes",
+        "Locked chapter visual overlay with iron padlock icon"
+      ]
+    },
+    "turn_based_battle_screen": {
+      "battle_layout": "Full-screen chapter background with hero on left, enemy/boss on right",
+      "top_hud": [
+        "Player HP/MP bars + portrait + status effects",
+        "Turn counter & Turn Order Timeline",
+        "Enemy/Boss HP bar with danger meter for boss rage",
+        "Chapter title and fight number indicator (e.g., Chapter 3 - Battle 4/5)"
+      ],
+      "combat_controls_bottom": [
+        "Attack: Standard strike with critical hit chance",
+        "Skill: Skill wheel with MP costs & cooldown counters",
+        "Potion: Health / Mana / Buff flask shortcuts",
+        "Defend: Shield up to halve incoming damage for 1 turn",
+        "Escape: Attempt tactical retreat with chance based on SPD stat"
+      ],
+      "vfx_and_animations": [
+        "Floating damage numbers (Yellow for Normal, Red/Gold with zoom scale for CRIT, Green for Heal, Blue for MP)",
+        "Screen shake on big hits or boss ultimate attacks",
+        "Attack movement step-forward animation using CSS transforms",
+        "Flash overlay effect on skill triggers and enemy counterattacks",
+        "Defeat fade-out vs Victory burst particle bounce"
+      ]
+    },
+    "character_screen": {
+      "features": [
+        "Full stats breakdown: Strength, Agility, Intelligence, Endurance, Critical Rate, Critical Damage, Dodge Chance",
+        "XP progress bar towards Level 50",
+        "Unallocated Stat Points allocator (+ / - buttons)",
+        "Class specialization mastery tree preview"
+      ]
+    },
+    "inventory_and_equipment": {
+      "features": [
+        "Equipment slots: Weapon, Armor, Helmet, Accessory",
+        "Grid inventory (4x6 slots) with color-coded item rarities: Common (Gray), Rare (Blue), Epic (Purple), Legendary (Gold)",
+        "Item stat tooltip hover showing comparison vs equipped item",
+        "Equip, Unequip, Sell, Upgrade mechanics"
+      ]
+    },
+    "shop_screen": {
+      "features": [
+        "Merchant NPC portrait with anime flavor text dialog",
+        "Potions stock (Small/Medium/Large HP & MP, Elixirs)",
+        "Equipment gear rotation refreshable with coins",
+        "Buyback tab & instant item purchase feedback toast"
+      ]
+    },
+    "quest_board": {
+      "features": [
+        "Side quest cards (Daily bounties, Kill targets, Boss slaying, Collectibles)",
+        "Rewards listing (Coins, XP, Rare Gear Crate)",
+        "Claim reward CTA button with sparkling particle shine"
+      ]
+    },
+    "settings_and_audio": {
+      "features": [
+        "Master Music / SFX volume sliders",
+        "Animation speed toggle (1x, 1.5x, 2x)",
+        "Screen Shake toggle switch",
+        "VFX Flash reduction mode switch",
+        "Data reset / Hard wipe with double confirmation modal"
+      ]
+    }
+  },
+  "image_urls": {
+    "heroes": [
+      {
+        "hero_id": "hero_red_warrior",
+        "url": "https://images.unsplash.com/photo-1653368653487-f55b96d90853?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "description": "High resolution anime fantasy warrior with magical purple glow"
+      },
+      {
+        "hero_id": "hero_masked_shadow",
+        "url": "https://images.unsplash.com/photo-1658116369704-da83f927f192?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "description": "Mystic anime assassin with tech-magic eyepiece"
+      },
+      {
+        "hero_id": "hero_cyber_mage",
+        "url": "https://images.unsplash.com/photo-1680447079006-f04c5c8bb087?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "description": "Anime sorceress with gold collar and magical crown"
+      },
+      {
+        "hero_id": "hero_hooded_ranger",
+        "url": "https://images.unsplash.com/photo-1657851613794-13616dbcc247?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "description": "Hooded anime blade master with glowing energy weapon"
+      }
+    ],
+    "backgrounds": [
+      {
+        "bg_id": "whispering_woods",
+        "url": "https://images.unsplash.com/photo-1778767061107-9d2cff5a132b?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "description": "Mystical glowing sunbeam tree in flowery magical glade"
+      },
+      {
+        "bg_id": "celestial_ruins",
+        "url": "https://images.unsplash.com/photo-1773046918727-cab05c181057?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "description": "Purple anime forest landscape with magical sunset sky"
+      },
+      {
+        "bg_id": "frostbite_lake",
+        "url": "https://images.unsplash.com/photo-1768153519393-8b686c038b12?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "description": "Misty ethereal archipelago with golden horizon sunrise"
+      },
+      {
+        "bg_id": "emerald_jungle",
+        "url": "https://images.unsplash.com/photo-1778042993734-c275e5cc2f23?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "description": "Misty jungle valley with ancient temple ruins"
+      }
+    ],
+    "items_and_loot": [
+      {
+        "item_id": "potions_chest",
+        "url": "https://images.unsplash.com/photo-1610270066297-7b06341d2b8a?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "description": "Glowing green alchemy potion bottles inside wooden chest"
+      },
+      {
+        "item_id": "legendary_dagger",
+        "url": "https://images.unsplash.com/photo-1667414083060-75a8614b1dc6?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "description": "Mystic steel dagger placed on dark altar"
+      },
+      {
+        "item_id": "relic_scroll",
+        "url": "https://images.unsplash.com/photo-1631867519984-2eb223627ddb?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "description": "Ancient magic quest scroll with wax seal"
+      }
+    ]
+  },
+  "motion_and_effects": {
+    "hover_state": "transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:border-amber-400",
+    "active_press": "active:scale-95 transition-transform duration-100",
+    "screen_shake_css": "@keyframes screenShake { 0%, 100% { transform: translate(0, 0); } 20% { transform: translate(-8px, 6px); } 40% { transform: translate(8px, -6px); } 60% { transform: translate(-6px, -4px); } 80% { transform: translate(6px, 4px); } }",
+    "hit_impact_css": "@keyframes hitImpact { 0% { filter: brightness(1) drop-shadow(0 0 0 red); } 50% { filter: brightness(2.5) drop-shadow(0 0 25px red); transform: scale(1.08); } 100% { filter: brightness(1); transform: scale(1); } }",
+    "damage_float_css": "@keyframes damageFloat { 0% { opacity: 0; transform: translateY(0) scale(0.6); } 20% { opacity: 1; transform: translateY(-20px) scale(1.3); } 100% { opacity: 0; transform: translateY(-60px) scale(1); } }"
+  },
+  "testing_requirements": {
+    "data_testid_rules": "All interactive elements, buttons, skill icons, inputs, hero cards, level nodes, equip slots, and modal close triggers MUST have kebab-case data-testid attributes",
+    "examples": [
+      "data-testid=\"login-username-input\"",
+      "data-testid=\"start-adventure-button\"",
+      "data-testid=\"hero-card-knight\"",
+      "data-testid=\"world-map-chapter-1-node\"",
+      "data-testid=\"battle-attack-btn\"",
+      "data-testid=\"battle-skill-btn-0\"",
+      "data-testid=\"battle-potion-btn\"",
+      "data-testid=\"inventory-slot-weapon\"",
+      "data-testid=\"shop-buy-potion-hp-btn\"",
+      "data-testid=\"quest-claim-btn-1\"",
+      "data-testid=\"settings-toggle-shake\""
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Load Google Fonts ('Cinzel' and 'Outfit') in public/index.html or top-level CSS.",
+    "Ensure all progress (heroes unlocked, level, current chapter, inventory, coins, stats, quests completed, sound settings) persists seamlessly in browser localStorage.",
+    "Ensure the combat system supports turn order calculations based on hero speed vs enemy speed.",
+    "Implement clear floating damage text indicators and screen shake effect triggered on critical attacks.",
+    "Never use pixel art graphics; rely on the provided high-res artwork, Tailwind gradients, translucent glass frames, Lucide icons, and ambient CSS magic effects.",
+    "Include full testid coverage on all game controls and navigation links as outlined."
+  ]
+}
