@@ -122,8 +122,8 @@ export function GameProvider({ children }) {
       if (prev.gems < cost) return prev;
       ok = true;
       const next = { ...prev, gems: prev.gems - cost, upgrades: { ...prev.upgrades, [upId]: rank + 1 } };
-      const c = getComputedStats(next);
-      next.hp = Math.min(c.maxHp, Math.max(prev.hp, Math.round(prev.hp * (c.maxHp / getComputedStats(prev).maxHp))));
+      const gained = getComputedStats(next).maxHp - getComputedStats(prev).maxHp;
+      next.hp = Math.min(getComputedStats(next).maxHp, prev.hp + Math.max(0, gained));
       return next;
     });
     return ok;

@@ -88,7 +88,7 @@ export default function BattleScreen() {
     if (target === "enemy") setEStatus(next); else setPStatus(next);
     addFloat(target, STATUS[inflict.type].label.toUpperCase(), STATUS[inflict.type].color);
     playSfx(inflict.type);
-    pushLog(`${target === "enemy" ? enemy.name : hero.name} is ${STATUS[inflict.type].label.toLowerCase()}!`);
+    pushLog(`${target === "enemy" ? enemy.name : hero.name} is ${{ poison: "poisoned", burn: "burning", stun: "stunned", weaken: "weakened" }[inflict.type]}!`);
   };
 
   // -------- player actions --------

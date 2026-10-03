@@ -9,7 +9,8 @@ Build "Village Legends": a single-player anime-fantasy RPG that runs entirely in
 - Persistence: browser `localStorage` key `village_legends_save_v1`.
 - Key files:
   - `src/game/data.js` — heroes, chapters/levels, enemy/boss builder, shop, quests, equipment, image URLs, xp/stat helpers.
-  - `src/game/combat.js` — damage formula, crit, escape, potion effects.
+  - `src/game/combat.js` — damage formula, crit, escape, potion effects, ELEMENTS/elementMult, STATUS/tickStatus/rollInflict.
+  - `src/game/audio.js` — procedural Web Audio music + SFX (`playSfx`, `startMusic`, `setAudioEnabled`, `unlockAudio`).
   - `src/game/GameContext.jsx` — profile state + all actions (battle resolution, xp/level, shop, inventory, quests, settings, reset).
   - `src/game/storage.js` — localStorage load/save/clear.
   - `src/components/` — NavBar, common UI helpers.
@@ -34,13 +35,19 @@ Build "Village Legends": a single-player anime-fantasy RPG that runs entirely in
 - XP/leveling, coins, potions, shop, inventory/equipment w/ drops & rarities, quests (claim + repeatable), character screen, settings, localStorage save/continue/reset.
 - Riven fights with a wolf companion (Primal Hunt = double strike).
 
+## Implemented (2026-06-04) — Phase 2 combat depth & gem economy (tested 11/11 E2E)
+- **Boss phases**: every boss has an ordered, telegraphed attack pattern ("Next: …" in HUD) incl. multi-hit, heal, guard and ATK-buff moves; Rage Phase at low HP (banner, red glow, ×1.25–1.4 ATK, new move set). Data: `BOSS_PATTERNS` in data.js.
+- **Status effects**: poison/burn (DoT), stun (skip turn), weaken (ATK down) on both sides; hero skills inflict (per `SKILL_INFLICT`); enemies have named moves per chapter (`ENEMY_MOVES`). Antidote potion (coins) cures.
+- **Elements**: fire>nature>water>fire, holy↔shadow; ×1.4 / ×0.7 damage, WEAK!/RESIST floats, HUD hint, element badges (hero + enemy, Character screen).
+- **Audio**: procedural Web Audio engine (`game/audio.js`) — menu/battle/boss music tracks + ~20 SFX, gated by Settings music/sound toggles, unlocked on first user gesture.
+- **Gems**: earned from boss kills (6+2×chapter), first-time 3-star clears (+1), quest rewards. Shop "Gem Emporium" tab: Eternal Blessings (5 permanent stat upgrades, ranks 0–5), Premium Gear (6 epic/legendary items), Phoenix Feather (auto-revive once/battle at 50% HP). Old saves migrate automatically.
+
 ## Backlog / future (not yet built)
-- **P1**: Unique boss attack patterns/phases & status effects (poison/stun/elemental); richer enemy variety.
-- **P1**: More equipment sets/rarities, gem sink (gems currently tracked but unspendable), manual stat-point allocation.
-- **P2**: Audio (music + SFX wired to existing toggles).
+- **P1**: Richer enemy variety (more enemy sprites/types per chapter), manual stat-point allocation.
 - **P2**: Bestiary / achievements, star-rating refinement, expanded daily quests, deeper balance tuning.
+- **P2**: Equipment upgrade/enchant with gems; more equipment sets.
 
 ## Next tasks
-- Add combat SFX/music hooked to settings toggles.
-- Add boss phases / status effects for more combat depth.
-- Give gems a purpose (premium shop or gear upgrades).
+- Bestiary & achievements.
+- Daily quests.
+- Balance pass on chapters 6–10 with statuses/elements.

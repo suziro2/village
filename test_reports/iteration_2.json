@@ -1,0 +1,30 @@
+{
+  "summary": "Comprehensive frontend testing of Village Legends new features: Boss Phases, Status Effects + Elements, Battle Audio, Gem Shop, and save migration. 11 of 11 test scenarios effectively PASS. All data-testids match spec. Verified: fresh start (nav-gems=0, coins=500), Shop tabs with Antidote (45c), Gem Emporium (Eternal Blessings, Premium Gear, Phoenix Feather) with proper disabled state at 0 gems, blessing purchase (hp 8g deducted, Vitality Blessing rank 1/5, maxHp 200->212 = +6%), premium gear Dawnbreaker (18g) added to inventory, Phoenix Feather purchase increments. Battle screen shows element badges + 'Foe is weak to your element' hint for Luna(fire) vs Chapter 1 nature enemies, floating WEAK! shown. Boss Goblin King 1-5: HUD shows 'Next: Club Smash' (data-testid boss-next-move), escape disabled, rage phase triggers at <=40% HP with 'Royal Fury' banner (data-testid rage-banner), HUD switches to '☠ ENRAGED ☠', next move becomes 'Crown Crusher', boss glows red (vl-rage-glow). Phoenix Feather revives at 50% HP with log 'A Phoenix Feather burns bright — you rise again!' and is NOT in in-battle potion list. Status effects: poison DoT ('Luna takes 30 poison damage.'), player-status pill shows Poison. Antidote works (CURED float, clears statuses) but enemy can re-poison same turn. Settings toggles persist to localStorage after reload. Quest board shows gem rewards text. Save migration from OLD-format profile (no upgrades, no antidote/phoenix) renders without crash; blessing purchase works post-migration. No audio errors on console (AudioContext created only on user gesture).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "BattleScreen inflict log", "issues": ["Grammar: inflict message prints '<Name> is poison!' / '<Name> is burn!' instead of 'poisoned/burned'. Uses STATUS[k].label.toLowerCase() verbatim. Low priority cosmetic."]}
+    ]
+  },
+  "test_report_links": ["/app/test_reports/iteration_2.json"],
+  "action_items": [
+    "(Optional, low priority) Fix inflict log grammar in BattleScreen.jsx line ~91: '${target} is ${STATUS[inflict.type].label.toLowerCase()}!' produces 'is poison!' — consider past-tense labels or hardcode mapping."
+  ],
+  "critical_code_review_comments": [
+    "BattleScreen.jsx still mutates `profile.consumables = consRef.current` inside an unconditional useEffect without dep array — React anti-pattern carried over from iteration 1. persistConsumables() also writes localStorage directly bypassing GameContext state, which can cause context's profile.consumables to be stale on next render until the next setProfile occurs.",
+    "GameContext.buyBlessing has an odd formula: next.hp = Math.min(c.maxHp, Math.max(prev.hp, Math.round(prev.hp * (c.maxHp / getComputedStats(prev).maxHp)))). The division duplicates work and may fail if hp was 0 (prev.hp=0 -> result 0). Simplification: scale hp proportionally to new maxHp.",
+    "Rage phase can be skipped entirely if a single hit drops boss HP from above 40% directly to <=0 (win() short-circuits enemyTurn which is where rage check lives). Edge case: a well-equipped player may never see the rage phase for weaker bosses — acceptable but worth noting.",
+    "ShopScreen uses GEM_UPGRADES map keys ('hp','atk','def','mag','crit') and maps crit via `flat` branch — fine but mixing % and flat silently in getComputedStats may confuse future contributors.",
+    "audio.js uses module-level mutable state (ctx, enabled, currentTrack) — hot reload during dev can leak timers via barTimer if setAudioEnabled during unmount isn't called. Not a user-facing issue in production build."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only app)", "frontend": "100% (11/11 scenarios)"},
+  "test_credentials": "None required. Seeded localStorage key village_legends_save_v1.",
+  "seed_data_creation": "Multiple localStorage seeds: (a) base profile with gems=60 for shop tests, (b) chapter-1-5 boss unlock with completed 1-1..1-4 at 3 stars, (c) weak profile (hp 30) + phoenix_feather:1 for revive test, (d) buffed hp 500 mag 35 for rage phase trigger, (e) OLD-format profile without upgrades/antidote/phoenix for migration test.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All 4 new feature groups work end-to-end. buildEnemy for chapter 1 boss produces maxHp ≈ 258 (not 858 as my OCR initially suggested). Rage threshold is 40% HP; to reliably trigger rage within test, use a hero that CANNOT one-shot through the 40% threshold (e.g. Luna mag 35 ~250 dmg per skill, boss 258hp — barely won't rage; mag 25-30 reliably triggers). To test burn infliction, Luna skill has 60% chance per skill call — may need 3+ attempts. Antidote clears player status immediately but enemy Poison Dart (chance 0.45) can re-poison same enemyTurn, so check log line immediately after use. No console errors observed from audio or React.",
+  "rca of the issue": "N/A — all critical paths pass. Minor grammar issue in status inflict log is cosmetic."
+}
