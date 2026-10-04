@@ -12,7 +12,7 @@ export default function LoadingScreen() {
       if (value >= 100) value = 12;
     }, 110);
     return () => clearInterval(timer);
-  }, [onComplete]);
+  }, []);
 
   return (
     <div className="vl-loading-screen">
