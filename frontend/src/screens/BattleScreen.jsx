@@ -4,6 +4,8 @@ import { getHero, buildEnemy, getComputedStats, makeDrop, BG_IMG, POTION_META } 
 import { rollDamage, escapeChance, potionEffect, elementMult, ELEMENTS, STATUS, EMPTY_STATUS, statusAtkPenalty, tickStatus, rollInflict } from "@/game/combat";
 import { playSfx } from "@/game/audio";
 import { Bar } from "@/components/common";
+import SpriteSheet from "@/components/SpriteSheet";
+import { getHeroSprite, getEnemySprite } from "@/game/sprites";
 import { Swords, Sparkles, FlaskConical, Shield, DoorOpen, X, Heart, Droplet, Flame, Skull, Zap, TrendingDown, Eye } from "lucide-react";
 
 const STATUS_ICON = { poison: Skull, burn: Flame, stun: Zap, weaken: TrendingDown };
@@ -339,8 +341,8 @@ export default function BattleScreen() {
 
   const persistConsumables = () => {
     try {
-      const raw = JSON.parse(localStorage.getItem("village_legends_save_v1"));
-      if (raw) { raw.consumables = { ...consRef.current }; localStorage.setItem("village_legends_save_v1", JSON.stringify(raw)); }
+      const raw = JSON.parse(localStorage.getItem(profile ? `village_legends_save_v2_${String(profile.username).toLowerCase().replace(/[^a-z0-9_.-]/g, "_")}` : "village_legends_save_v1"));
+      if (raw) { raw.consumables = { ...consRef.current }; localStorage.setItem(profile ? `village_legends_save_v2_${String(profile.username).toLowerCase().replace(/[^a-z0-9_.-]/g, "_")}` : "village_legends_save_v1", JSON.stringify(raw)); }
     } catch (e) {}
   };
   useEffect(() => {
@@ -416,13 +418,13 @@ export default function BattleScreen() {
       {/* battlefield */}
       <div className="relative z-10 flex-1 flex items-center justify-between px-4 sm:px-16 h-[46vh] sm:h-[52vh]">
         <div className="relative w-40 sm:w-64">
-          <img src={hero.img} alt={hero.name} className={`vl-glass-sprite w-full object-contain ${heroAnim}`} style={{ maxHeight: "48vh" }} />
+          <SpriteSheet src={getHeroSprite(hero.id)} fallback={hero.img} alt={hero.name} animation={heroAnim} className="vl-glass-sprite w-full object-contain" />
           {floats.filter((f) => f.target === "player").map((f) => (
             <span key={f.id} className="vl-damage" style={{ color: f.color, fontSize: f.big ? "2.4rem" : "1.6rem", left: `${f.left}%` }}>{f.text}</span>
           ))}
         </div>
         <div className={`relative w-40 sm:w-64 ${raged ? "vl-rage-glow" : ""}`}>
-          <img src={enemy.img} alt={enemy.name} className={`vl-glass-sprite w-full object-contain ${enemyAnim}`} style={{ maxHeight: "48vh", transform: "scaleX(-1)" }} />
+          <div style={{ transform: "scaleX(-1)" }}><SpriteSheet src={getEnemySprite(enemy.spriteId, enemy.isBoss)} fallback={enemy.img} alt={enemy.name} animation={enemyAnim} className="vl-glass-sprite w-full object-contain" /></div>
           {floats.filter((f) => f.target === "enemy").map((f) => (
             <span key={f.id} className="vl-damage" style={{ color: f.color, fontSize: f.big ? "2.6rem" : "1.7rem", left: `${f.left}%` }}>{f.text}</span>
           ))}
