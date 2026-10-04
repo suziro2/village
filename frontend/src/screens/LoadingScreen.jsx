@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Sparkles, Swords } from "lucide-react";
 
-export default function LoadingScreen({ onComplete }) {
+export default function LoadingScreen() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -9,10 +9,7 @@ export default function LoadingScreen({ onComplete }) {
     const timer = setInterval(() => {
       value = Math.min(100, value + Math.floor(Math.random() * 13) + 5);
       setProgress(value);
-      if (value >= 100) {
-        clearInterval(timer);
-        setTimeout(onComplete, 350);
-      }
+      if (value >= 100) value = 12;
     }, 110);
     return () => clearInterval(timer);
   }, [onComplete]);
