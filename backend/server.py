@@ -10,6 +10,8 @@ from typing import List
 import uuid
 from datetime import datetime, timezone
 
+from .auth import build_auth_router
+
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -68,6 +70,11 @@ async def get_status_checks():
 
 # Include the router in the main app
 app.include_router(api_router)
+app.include_router(build_auth_router(db))
+
+@app.on_event("startup")
+async def ensure_indexes():
+    await db.users.create_index("username", unique=True)
 
 app.add_middleware(
     CORSMiddleware,
