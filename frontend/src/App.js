@@ -49,7 +49,7 @@ function Router() {
 
   let content;
   switch (screen) {
-    case "loading": content = <LoadingScreen onComplete={() => {}} />; break;
+    case "loading": content = <LoadingScreen />; break;
     case "login": content = <LoginScreen />; break;
     case "heroSelect": content = <HeroSelectScreen />; break;
     case "menu": content = <MainMenu />; break;
