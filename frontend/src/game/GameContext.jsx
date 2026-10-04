@@ -48,7 +48,7 @@ export function GameProvider({ children }) {
     clearProfile();
     setProfile(null);
     setScreen("heroSelect");
-  }, [authUser]);
+  }, []);
 
   // ---- navigation ----
   const go = useCallback((s) => setScreen(s), []);
