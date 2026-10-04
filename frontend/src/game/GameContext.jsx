@@ -1,83 +1,51 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { loadProfile, saveProfile, clearProfile } from "./storage";
-import { getCurrentUser, login as authLogin, register as authRegister, logout as authLogout } from "./auth";
 import { createProfile, getComputedStats, getHero, xpToNext, makeDrop, QUESTS, GEM_UPGRADES, blessingCost } from "./data";
 
 const GameContext = createContext(null);
 export const useGame = () => useContext(GameContext);
 
 export function GameProvider({ children }) {
-  const [authUser, setAuthUser] = useState(null);
-  const [authLoading, setAuthLoading] = useState(true);
   const [profile, setProfile] = useState(null);
   const [screen, setScreen] = useState("loading");
-  const [draftName, setDraftName] = useState("");
+  const [draftName, setDraftName] = useState("Player");
   const [currentChapter, setCurrentChapter] = useState(1);
   const [currentBattle, setCurrentBattle] = useState(null); // {chapter, level}
   const [lastRewards, setLastRewards] = useState(null);
 
   useEffect(() => {
-    let active = true;
-    (async () => {
-      const user = await getCurrentUser();
-      if (!active) return;
-      if (user) {
-        const existing = loadProfile(user.username) || (loadProfile() && loadProfile().username === user.username ? loadProfile() : null);
-        setAuthUser(user);
-        setDraftName(user.username);
-        setProfile(existing);
-        setScreen(existing ? "menu" : "heroSelect");
-      } else {
-        setScreen("login");
-      }
-      setAuthLoading(false);
-    })();
-    return () => { active = false; };
+    const existing = loadProfile();
+    if (existing) {
+      setDraftName(existing.username || "Player");
+      setProfile(existing);
+      setScreen("menu");
+    } else {
+      setScreen("heroSelect");
+    }
   }, []);
 
   useEffect(() => {
-    if (profile && authUser) saveProfile(profile, authUser.username);
-  }, [profile, authUser]);
+    if (profile) saveProfile(profile);
+  }, [profile]);
 
   const computed = profile ? getComputedStats(profile) : null;
 
   // ---- profile lifecycle ----
   const startNewGame = useCallback((username, heroId) => {
-    const p = createProfile(username, heroId);
+    const p = createProfile((username || "Player").trim() || "Player", heroId);
     setProfile(p);
     setScreen("menu");
   }, []);
 
-  const login = useCallback(async (username, password) => {
-    const user = await authLogin(username, password);
-    const existing = loadProfile(user.username);
-    setAuthUser(user);
-    setDraftName(user.username);
-    setProfile(existing);
-    setScreen(existing ? "menu" : "heroSelect");
-    return user;
-  }, []);
-
-  const register = useCallback(async (username, password) => {
-    const user = await authRegister(username, password);
-    setAuthUser(user);
-    setDraftName(user.username);
-    setProfile(null);
-    setScreen("heroSelect");
-    return user;
-  }, []);
-
   const logout = useCallback(() => {
-    if (authUser) saveProfile(profile, authUser.username);
-    authLogout();
-    setAuthUser(null);
+    saveProfile(profile);
     setProfile(null);
-    setDraftName("");
-    setScreen("login");
-  }, [authUser, profile]);
+    setDraftName("Player");
+    setScreen("heroSelect");
+  }, [profile]);
 
   const resetSave = useCallback(() => {
-    clearProfile(authUser?.username);
+    clearProfile();
     setProfile(null);
     setScreen("heroSelect");
   }, [authUser]);
@@ -290,7 +258,7 @@ export function GameProvider({ children }) {
 
   const value = {
     profile, computed, screen, draftName, setDraftName, currentChapter, currentBattle, lastRewards,
-    authUser, authLoading, login, register, logout,
+    logout,
     startNewGame, resetSave, go, openChapter, startLevel,
     updateSettings, buyItem, buyGemGear, buyGemConsumable, buyBlessing, equipItem, unequipItem, sellItem, claimQuest, statValue,
     applyVictory, applyDefeat, applyEscape,
