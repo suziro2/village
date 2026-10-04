@@ -1,53 +1,89 @@
-const API_BASE = (process.env.REACT_APP_API_URL || "").replace(/\/$/, "");
-const TOKEN_KEY = "village_legends_auth_token";
+const USERS_KEY = "village_legends_users_v1";
+const SESSION_KEY = "village_legends_session_v1";
 
-export async function authRequest(path, options = {}) {
-  const token = localStorage.getItem(TOKEN_KEY);
-  const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
-  if (token) headers.Authorization = `Bearer ${token}`;
-
-  const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
-  let body = null;
-  try { body = await response.json(); } catch (_) {}
-  if (!response.ok) {
-    throw new Error(body?.detail || "Authentication request failed");
+function readUsers() {
+  try {
+    return JSON.parse(localStorage.getItem(USERS_KEY) || "{}");
+  } catch (_) {
+    return {};
   }
-  return body;
 }
 
-export async function login(username, password) {
-  const result = await authRequest("/api/auth/login", {
-    method: "POST",
-    body: JSON.stringify({ username, password }),
-  });
-  localStorage.setItem(TOKEN_KEY, result.access_token);
-  return result.user;
+function writeUsers(users) {
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
+
+async function hashPassword(password, salt) {
+  const data = new TextEncoder().encode(`${salt}:${password}`);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function createSalt() {
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  return Array.from(bytes).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 export async function register(username, password) {
-  const result = await authRequest("/api/auth/register", {
-    method: "POST",
-    body: JSON.stringify({ username, password }),
-  });
-  localStorage.setItem(TOKEN_KEY, result.access_token);
-  return result.user;
+  const normalized = username.trim().toLowerCase();
+  const users = readUsers();
+
+  if (users[normalized]) {
+    throw new Error("Username is already registered");
+  }
+
+  const salt = createSalt();
+  const passwordHash = await hashPassword(password, salt);
+
+  users[normalized] = {
+    id: crypto.randomUUID(),
+    username: normalized,
+    salt,
+    passwordHash,
+    createdAt: new Date().toISOString(),
+  };
+
+  writeUsers(users);
+  localStorage.setItem(SESSION_KEY, normalized);
+
+  return { id: users[normalized].id, username: normalized };
+}
+
+export async function login(username, password) {
+  const normalized = username.trim().toLowerCase();
+  const users = readUsers();
+  const user = users[normalized];
+
+  if (!user) {
+    throw new Error("Invalid username or password");
+  }
+
+  const passwordHash = await hashPassword(password, user.salt);
+  if (passwordHash !== user.passwordHash) {
+    throw new Error("Invalid username or password");
+  }
+
+  localStorage.setItem(SESSION_KEY, normalized);
+  return { id: user.id, username: user.username };
 }
 
 export function logout() {
-  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(SESSION_KEY);
 }
 
 export function hasAuthToken() {
-  return Boolean(localStorage.getItem(TOKEN_KEY));
+  return Boolean(localStorage.getItem(SESSION_KEY));
 }
 
 export async function getCurrentUser() {
-  if (!hasAuthToken()) return null;
-  try {
-    const result = await authRequest("/api/auth/me");
-    return result;
-  } catch (_) {
+  const username = localStorage.getItem(SESSION_KEY);
+  if (!username) return null;
+
+  const user = readUsers()[username];
+  if (!user) {
     logout();
     return null;
   }
+
+  return { id: user.id, username: user.username };
 }
