@@ -21,6 +21,10 @@ export function GameProvider({ children }) {
     (async () => {
       const user = await getCurrentUser();
       if (!active) return;
+      // Keep the branded loading screen visible briefly so it feels intentional
+      // even when the auth API responds immediately.
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+      if (!active) return;
       if (user) {
         const existing = loadProfile(user.username);
         setAuthUser(user);
