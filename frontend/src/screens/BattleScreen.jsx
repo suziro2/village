@@ -5,7 +5,7 @@ import { rollDamage, escapeChance, potionEffect, elementMult, ELEMENTS, STATUS, 
 import { playSfx } from "@/game/audio";
 import { Bar } from "@/components/common";
 import SpriteSheet from "@/components/SpriteSheet";
-import { getHeroSprite, getEnemySprite } from "@/game/sprites";
+import { getHeroSprite, getHeroAttackSprite, getEnemySprite } from "@/game/sprites";
 import { Swords, Sparkles, FlaskConical, Shield, DoorOpen, X, Heart, Droplet, Flame, Skull, Zap, TrendingDown, Eye } from "lucide-react";
 
 const STATUS_ICON = { poison: Skull, burn: Flame, stun: Zap, weaken: TrendingDown };
@@ -418,7 +418,7 @@ export default function BattleScreen() {
       {/* battlefield */}
       <div className="relative z-10 flex-1 flex items-center justify-between px-4 sm:px-16 h-[46vh] sm:h-[52vh]">
         <div className="relative w-40 sm:w-64">
-          <SpriteSheet src={getHeroSprite(hero.id)} fallback={hero.img} alt={hero.name} animation={heroAnim} className="vl-glass-sprite w-full object-contain" />
+          <SpriteSheet src={(heroAnim === "vl-attack-right" || heroAnim === "attack") ? (getHeroAttackSprite(hero.id) || getHeroSprite(hero.id)) : getHeroSprite(hero.id)} fallback={hero.img} alt={hero.name} animation={heroAnim} frames={4} className="vl-glass-sprite w-full object-contain" />
           {floats.filter((f) => f.target === "player").map((f) => (
             <span key={f.id} className="vl-damage" style={{ color: f.color, fontSize: f.big ? "2.4rem" : "1.6rem", left: `${f.left}%` }}>{f.text}</span>
           ))}
