@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useGame } from "@/game/GameContext";
 import { HEROES } from "@/game/data";
 import { Panel, GoldButton, Bar } from "@/components/common";
-import { Check, Heart, Droplet, Swords, Shield, Zap, Wind, Target } from "lucide-react";
+import { ArrowLeft, Check, Heart, Droplet, Swords, Shield, Zap, Wind, Target } from "lucide-react";
 
 const STAT_ROWS = [
   { key: "hp", label: "HP", icon: Heart, color: "#ef4444", max: 140 },
@@ -15,14 +15,17 @@ const STAT_ROWS = [
 ];
 
 export default function HeroSelectScreen() {
-  const { draftName, startNewGame } = useGame();
+  const { draftName, startNewGame, go } = useGame();
   const [selected, setSelected] = useState(HEROES[0]);
 
   return (
     <div className="flex-1 max-w-7xl mx-auto w-full px-3 sm:px-6 py-6">
-      <div className="mb-5">
-        <h1 className="vl-heading text-3xl sm:text-4xl">Choose Your Hero</h1>
-        <p className="text-slate-400 text-sm">Welcome, {draftName || "Player"}. Pick the legend you will become.</p>
+      <div className="flex items-center gap-3 mb-5">
+        <GoldButton variant="ghost" data-testid="hero-back-btn" onClick={() => go("login")} className="!px-3 !py-2"><ArrowLeft size={18} /></GoldButton>
+        <div>
+          <h1 className="vl-heading text-3xl sm:text-4xl">Choose Your Hero</h1>
+          <p className="text-slate-400 text-sm">Welcome, {draftName}. Pick the legend you will become.</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
