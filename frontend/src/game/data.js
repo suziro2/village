@@ -405,6 +405,7 @@ export function buildEnemy(chapter, level) {
   return {
     name: isBoss ? cfg.bossName : cfg.enemyName,
     img: isBoss ? BOSS_IMG[cfg.bossImg] : ENEMY_IMG[cfg.enemyImg],
+    spriteId: isBoss ? cfg.bossImg : cfg.enemyImg,
     maxHp: hp, hp, atk, def, spd, xp, coins, isBoss, isFinal,
     gems: isBoss ? 6 + chapter * 2 : 0,
     element: isBoss ? bossEl : enemyEl,

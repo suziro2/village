@@ -4,6 +4,7 @@ import { GameProvider, useGame } from "@/game/GameContext";
 import { unlockAudio, setAudioEnabled, startMusic, playSfx } from "@/game/audio";
 import NavBar from "@/components/NavBar";
 import LoginScreen from "@/screens/LoginScreen";
+import LoadingScreen from "@/screens/LoadingScreen";
 import HeroSelectScreen from "@/screens/HeroSelectScreen";
 import MainMenu from "@/screens/MainMenu";
 import WorldMap from "@/screens/WorldMap";
@@ -48,6 +49,7 @@ function Router() {
 
   let content;
   switch (screen) {
+    case "loading": content = <LoadingScreen />; break;
     case "login": content = <LoginScreen />; break;
     case "heroSelect": content = <HeroSelectScreen />; break;
     case "menu": content = <MainMenu />; break;
