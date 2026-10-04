@@ -181,3 +181,14 @@
 .vl-status-pill { animation: pillPop 0.25s ease-out both; }
 
 .vl-loading-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 42%,rgba(245,158,11,.10),transparent 28%),#070a11;color:#f8fafc}.vl-loading-orb{width:92px;height:92px;border-radius:28px;display:flex;align-items:center;justify-content:center;color:#fbbf24;background:rgba(245,158,11,.10);border:1px solid rgba(251,191,36,.35);box-shadow:0 0 70px rgba(245,158,11,.12)}.vl-sprite-sheet{width:180px;height:240px;background-repeat:no-repeat;background-position-y:center;image-rendering:auto}
+
+.vl-loading-screen{isolation:isolate}
+.vl-loading-star{position:absolute;color:rgba(251,191,36,.7);animation:vl-star-float 3s ease-in-out infinite}
+.vl-loading-star-1{top:18%;left:18%}
+.vl-loading-star-2{top:28%;right:17%;animation-delay:.8s}
+.vl-loading-star-3{bottom:22%;left:25%;animation-delay:1.5s}
+.vl-loading-ring{position:absolute;border:1px solid rgba(251,191,36,.12);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none}
+.vl-loading-ring-1{width:360px;height:360px;animation:vl-ring-pulse 4s ease-in-out infinite}
+.vl-loading-ring-2{width:560px;height:560px;animation:vl-ring-pulse 5s ease-in-out infinite reverse}
+@keyframes vl-star-float{0%,100%{transform:translateY(0) scale(1);opacity:.45}50%{transform:translateY(-12px) scale(1.15);opacity:1}}
+@keyframes vl-ring-pulse{0%,100%{opacity:.25;transform:translate(-50%,-50%) scale(.96)}50%{opacity:.65;transform:translate(-50%,-50%) scale(1.03)}}
