@@ -1,21 +1,21 @@
-import "@/App.css";
+import "./App.css";
 import { useEffect } from "react";
-import { GameProvider, useGame } from "@/game/GameContext";
-import { unlockAudio, setAudioEnabled, startMusic, playSfx } from "@/game/audio";
-import NavBar from "@/components/NavBar";
-import LoginScreen from "@/screens/LoginScreen";
-import LoadingScreen from "@/screens/LoadingScreen";
-import HeroSelectScreen from "@/screens/HeroSelectScreen";
-import MainMenu from "@/screens/MainMenu";
-import WorldMap from "@/screens/WorldMap";
-import ChapterScreen from "@/screens/ChapterScreen";
-import BattleScreen from "@/screens/BattleScreen";
-import CharacterScreen from "@/screens/CharacterScreen";
-import InventoryScreen from "@/screens/InventoryScreen";
-import ShopScreen from "@/screens/ShopScreen";
-import QuestScreen from "@/screens/QuestScreen";
-import SettingsScreen from "@/screens/SettingsScreen";
-import { VictoryScreen, DefeatScreen, ChapterCompleteScreen, GameCompleteScreen } from "@/screens/ResultScreens";
+import { GameProvider, useGame } from "./game/GameContext";
+import { unlockAudio, setAudioEnabled, startMusic, playSfx } from "./game/audio";
+import NavBar from "./components/NavBar";
+import LoginScreen from "./screens/LoginScreen";
+import LoadingScreen from "./screens/LoadingScreen";
+import HeroSelectScreen from "./screens/HeroSelectScreen";
+import MainMenu from "./screens/MainMenu";
+import WorldMap from "./screens/WorldMap";
+import ChapterScreen from "./screens/ChapterScreen";
+import BattleScreen from "./screens/BattleScreen";
+import CharacterScreen from "./screens/CharacterScreen";
+import InventoryScreen from "./screens/InventoryScreen";
+import ShopScreen from "./screens/ShopScreen";
+import QuestScreen from "./screens/QuestScreen";
+import SettingsScreen from "./screens/SettingsScreen";
+import { VictoryScreen, DefeatScreen, ChapterCompleteScreen, GameCompleteScreen } from "./screens/ResultScreens";
 
 const NAV_SCREENS = ["menu", "map", "chapter", "character", "inventory", "shop", "quests", "settings"];
 
