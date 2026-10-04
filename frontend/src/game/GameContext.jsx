@@ -22,7 +22,7 @@ export function GameProvider({ children }) {
       const user = await getCurrentUser();
       if (!active) return;
       if (user) {
-        const existing = loadProfile(user.id) || (loadProfile() && loadProfile().username === user.username ? loadProfile() : null);
+        const existing = loadProfile(user.username) || (loadProfile() && loadProfile().username === user.username ? loadProfile() : null);
         setAuthUser(user);
         setDraftName(user.username);
         setProfile(existing);
@@ -36,7 +36,7 @@ export function GameProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (profile && authUser) saveProfile(profile, authUser.id);
+    if (profile && authUser) saveProfile(profile, authUser.username);
   }, [profile, authUser]);
 
   const computed = profile ? getComputedStats(profile) : null;
@@ -50,7 +50,7 @@ export function GameProvider({ children }) {
 
   const login = useCallback(async (username, password) => {
     const user = await authLogin(username, password);
-    const existing = loadProfile(user.id);
+    const existing = loadProfile(user.username);
     setAuthUser(user);
     setDraftName(user.username);
     setProfile(existing);
@@ -68,7 +68,7 @@ export function GameProvider({ children }) {
   }, []);
 
   const logout = useCallback(() => {
-    if (authUser) saveProfile(profile, authUser.id);
+    if (authUser) saveProfile(profile, authUser.username);
     authLogout();
     setAuthUser(null);
     setProfile(null);
@@ -77,7 +77,7 @@ export function GameProvider({ children }) {
   }, [authUser, profile]);
 
   const resetSave = useCallback(() => {
-    clearProfile(authUser?.id);
+    clearProfile(authUser?.username);
     setProfile(null);
     setScreen("heroSelect");
   }, [authUser]);
