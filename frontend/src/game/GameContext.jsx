@@ -1,11 +1,14 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { loadProfile, saveProfile, clearProfile } from "./storage";
+import { getCurrentUser, login as authLogin, register as authRegister, logout as authLogout } from "./auth";
 import { createProfile, getComputedStats, getHero, xpToNext, makeDrop, QUESTS, GEM_UPGRADES, blessingCost } from "./data";
 
 const GameContext = createContext(null);
 export const useGame = () => useContext(GameContext);
 
 export function GameProvider({ children }) {
+  const [authUser, setAuthUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [profile, setProfile] = useState(null);
   const [screen, setScreen] = useState("loading");
   const [draftName, setDraftName] = useState("Player");
@@ -14,19 +17,27 @@ export function GameProvider({ children }) {
   const [lastRewards, setLastRewards] = useState(null);
 
   useEffect(() => {
-    const existing = loadProfile();
-    if (existing) {
-      setDraftName(existing.username || "Player");
-      setProfile(existing);
-      setScreen("menu");
-    } else {
-      setScreen("heroSelect");
-    }
+    let active = true;
+    (async () => {
+      const user = await getCurrentUser();
+      if (!active) return;
+      if (user) {
+        const existing = loadProfile(user.username);
+        setAuthUser(user);
+        setDraftName(user.username);
+        setProfile(existing);
+        setScreen(existing ? "menu" : "heroSelect");
+      } else {
+        setScreen("login");
+      }
+      setAuthLoading(false);
+    })();
+    return () => { active = false; };
   }, []);
 
   useEffect(() => {
-    if (profile) saveProfile(profile);
-  }, [profile]);
+    if (profile && authUser) saveProfile(profile, authUser.username);
+  }, [profile, authUser]);
 
   const computed = profile ? getComputedStats(profile) : null;
 
@@ -37,15 +48,36 @@ export function GameProvider({ children }) {
     setScreen("menu");
   }, []);
 
-  const logout = useCallback(() => {
-    saveProfile(profile);
+  const login = useCallback(async (username, password) => {
+    const user = await authLogin(username, password);
+    const existing = loadProfile(user.username);
+    setAuthUser(user);
+    setDraftName(user.username);
+    setProfile(existing);
+    setScreen(existing ? "menu" : "heroSelect");
+    return user;
+  }, []);
+
+  const register = useCallback(async (username, password) => {
+    const user = await authRegister(username, password);
+    setAuthUser(user);
+    setDraftName(user.username);
     setProfile(null);
-    setDraftName("Player");
     setScreen("heroSelect");
-  }, [profile]);
+    return user;
+  }, []);
+
+  const logout = useCallback(() => {
+    if (authUser) saveProfile(profile, authUser.username);
+    authLogout();
+    setAuthUser(null);
+    setProfile(null);
+    setDraftName("");
+    setScreen("login");
+  }, [authUser, profile]);
 
   const resetSave = useCallback(() => {
-    clearProfile();
+    clearProfile(authUser?.username);
     setProfile(null);
     setScreen("heroSelect");
   }, []);
@@ -258,7 +290,7 @@ export function GameProvider({ children }) {
 
   const value = {
     profile, computed, screen, draftName, setDraftName, currentChapter, currentBattle, lastRewards,
-    logout,
+    authUser, authLoading, login, register, logout,
     startNewGame, resetSave, go, openChapter, startLevel,
     updateSettings, buyItem, buyGemGear, buyGemConsumable, buyBlessing, equipItem, unequipItem, sellItem, claimQuest, statValue,
     applyVictory, applyDefeat, applyEscape,
