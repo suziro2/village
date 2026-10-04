@@ -192,3 +192,13 @@
 .vl-loading-ring-2{width:560px;height:560px;animation:vl-ring-pulse 5s ease-in-out infinite reverse}
 @keyframes vl-star-float{0%,100%{transform:translateY(0) scale(1);opacity:.45}50%{transform:translateY(-12px) scale(1.15);opacity:1}}
 @keyframes vl-ring-pulse{0%,100%{opacity:.25;transform:translate(-50%,-50%) scale(.96)}50%{opacity:.65;transform:translate(-50%,-50%) scale(1.03)}}
+
+.vl-combat-character{transition:transform .12s ease,filter .12s ease}
+.vl-character-attacking{animation:vl-character-attack .48s cubic-bezier(.2,.8,.2,1) both}
+.vl-sprite-attacking{animation:vl-sprite-attack .48s cubic-bezier(.2,.8,.2,1) both;filter:drop-shadow(0 0 12px rgba(96,165,250,.45))}
+.vl-sprite-skilling{animation:vl-sprite-skill .62s ease-out both}
+.vl-slash-effect{position:absolute;inset:12% 4%;pointer-events:none;opacity:0;border-radius:50%;background:linear-gradient(120deg,transparent 30%,rgba(125,211,252,.9) 48%,rgba(255,255,255,.95) 51%,transparent 62%);transform:translateX(-25%) rotate(-12deg);animation:vl-slash .48s ease-out both}
+@keyframes vl-character-attack{0%{transform:translateX(0) rotate(0) scale(1)}18%{transform:translateX(7px) rotate(-2deg) scale(1.02)}42%{transform:translateX(34px) rotate(-7deg) scale(1.08)}58%{transform:translateX(48px) rotate(5deg) scale(1.03)}76%{transform:translateX(18px) rotate(1deg) scale(1.01)}100%{transform:translateX(0) rotate(0) scale(1)}}
+@keyframes vl-sprite-attack{0%{transform:translateX(0) rotate(0) scale(1)}18%{transform:translateX(8px) rotate(-3deg) scale(1.03)}42%{transform:translateX(30px) rotate(-7deg) scale(1.08)}58%{transform:translateX(42px) rotate(5deg) scale(1.04)}78%{transform:translateX(15px) rotate(1deg) scale(1.01)}100%{transform:translateX(0) rotate(0) scale(1)}}
+@keyframes vl-sprite-skill{0%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(96,165,250,0))}45%{transform:scale(1.12) rotate(-3deg);filter:drop-shadow(0 0 24px rgba(96,165,250,.85))}100%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(96,165,250,0))}}
+@keyframes vl-slash{0%{opacity:0;transform:translate(-35%,20%) rotate(-18deg) scale(.65)}28%{opacity:1;transform:translate(5%,0) rotate(-8deg) scale(1)}65%{opacity:.85;transform:translate(28%,-4%) rotate(-3deg) scale(1.1)}100%{opacity:0;transform:translate(55%,-12%) rotate(5deg) scale(1.2)}}
