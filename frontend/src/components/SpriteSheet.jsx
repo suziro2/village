@@ -7,7 +7,7 @@ export default function SpriteSheet({
   fallback,
   alt = "",
   animation = "idle",
-  frames = 4,
+  frames = 6,
   fps = 12,
   className = "",
 }) {
