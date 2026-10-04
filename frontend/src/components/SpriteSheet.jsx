@@ -10,6 +10,17 @@ export default function SpriteSheet({
   className = "",
 }) {
   const [frame, setFrame] = useState(0);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+    if (!src) return undefined;
+    const probe = new Image();
+    probe.onload = () => setFailed(false);
+    probe.onerror = () => setFailed(true);
+    probe.src = src;
+    return () => { probe.onload = null; probe.onerror = null; };
+  }, [src]);
 
   useEffect(() => {
     if (animation === "idle" || animation === "hit" || animation === "defeat") {
@@ -24,7 +35,7 @@ export default function SpriteSheet({
     return () => clearInterval(timer);
   }, [animation, frames, fps]);
 
-  if (!src) return <img src={fallback} alt={alt} className={className} />;
+  if (!src || failed) return <img src={fallback} alt={alt} className={className} />;
 
   return (
     <div
