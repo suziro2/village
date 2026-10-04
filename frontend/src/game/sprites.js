@@ -1,4 +1,4 @@
-// Sprite-sheet manifest. Add the matching PNG/WebP sheets under public/sprites.
+// Sprite-sheet manifest. Use dedicated attack sheets when available; keep static fallbacks for the rest.
 // Every sheet is a single row of frames with the same frame dimensions.
 const base = "/sprites";
 
