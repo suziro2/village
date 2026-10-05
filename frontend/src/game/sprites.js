@@ -8,6 +8,7 @@ export const HERO_SPRITES = Object.fromEntries(
 );
 
 export const HERO_ATTACK_SPRITES = { aiden: `${base}/heroes/aiden-attack.png` };
+export const HERO_SKILL_SPRITES = { aiden: `${base}/heroes/aiden-skill.webp` };
 
 export const ENEMY_SPRITES = Object.fromEntries(
   ["goblin","wolf","ice_golem","bandit","skeleton","dark_mage"]
@@ -21,6 +22,7 @@ export const BOSS_SPRITES = Object.fromEntries(
 
 export function getHeroSprite(id) { return HERO_SPRITES[id] || null; }
 export function getHeroAttackSprite(id) { return HERO_ATTACK_SPRITES[id] || null; }
+export function getHeroSkillSprite(id) { return HERO_SKILL_SPRITES[id] || null; }
 export function getEnemySprite(id, isBoss) {
   return (isBoss ? BOSS_SPRITES[id] : ENEMY_SPRITES[id]) || null;
 }
