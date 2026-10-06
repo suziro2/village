@@ -7,8 +7,8 @@ export const HERO_SPRITES = Object.fromEntries(
     .map((id) => [id, `${base}/heroes/${id}.svg`])
 );
 
-export const HERO_ATTACK_SPRITES = { aiden: `${base}/heroes/aiden-attack.png` };
-export const HERO_SKILL_SPRITES = { aiden: `${base}/heroes/aiden-skill.webp` };
+export const HERO_ATTACK_SPRITES = { aiden: `${base}/heroes/aiden-attack-real.webp` };
+export const HERO_SKILL_SPRITES = { aiden: `${base}/heroes/aiden-skill-real.webp` };
 
 export const ENEMY_SPRITES = Object.fromEntries(
   ["goblin","wolf","ice_golem","bandit","skeleton","dark_mage"]
